@@ -1,0 +1,193 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node{
+    int key;
+    Node *left, *right;
+    Node(int key){
+    this->key = key;
+    this->left = this->right = nullptr;
+    }
+};
+
+
+void reverse(Node *root){
+    if(root == nullptr){
+        return;
+    }
+    list<Node*> q ;
+    q.push_back(root);
+    stack<int> s;
+    Node *curr = nullptr;
+    while(q.size()){
+        curr = q.front();
+        q.pop_front();
+        s.push(curr->key);
+        if(curr->right){
+            q.push_front(curr->right);
+        }
+        if(curr->left){
+            q.push_front(curr->left);
+        }
+    }
+    
+    while(!s.empty()){
+        cout << s.top() << " : ";
+        s.pop();
+    }
+}
+
+bool print(Node *root, int level){
+    if(root == nullptr){
+        return false;
+    }
+    if(level == 1){
+        cout << root-> key << ":";
+        return true;
+    }
+    bool left = print(root->left , level-1);
+    bool right = print(root->right, level-1);
+    return left || right;
+}
+
+void printLevelOrder(Node *root){
+    if(root== nullptr){
+        return;
+    }
+    int level = 1;
+    while(print(root, level)){
+        level++;
+    }
+}
+
+void findLevel(Node *root, Node *x, int index, int &level){
+    if(root == nullptr || level){
+        return;
+    }
+    if(root == x){
+        level = index;
+    }
+    findLevel(root->left, x, index+1, level);
+    findLevel(root->right, x, index+1, level);
+}
+
+void printLevel(Node *root, Node *node, int level){
+    if(root == nullptr){
+        return; 
+    }
+    if(level == 1){
+        cout << root -> key << " : ";
+        return;
+    }
+    if(!(root->left && root->left == node || root->right &&  root->right == node)){
+        printLevel(root->left , node, level -1);
+        printLevel(root->right, node, level-1);
+    }
+    
+}
+ 
+
+void printAllCousin( Node *root, Node *node){
+    int level = 0;
+    findLevel(root, node,1, level);
+    printLevel(root, node, level);
+}
+
+int convertToMirror(Node *root){
+    if(root == NULL){
+        return true;
+    }
+    convertToMirror(root->left);
+    convertToMirror(root->right);
+    swap(root->left , root->right);
+}
+
+void printTopView(Node *root, int dist, int level, auto&m){
+    if(root== NULL){
+        return;
+    }
+    if(m.find(dist) == m.end() || level < m[dist].second ){
+        m[dist] = {root->key, level};
+    }
+    printTopView(root->left, dist-1, level+1, m);
+    printTopView(root->right, dist+1, level +1, m);
+}
+
+void TopView(Node *root){
+    map<int, pair<int,int>>m ;
+    printTopView(root, 0, 0 , m);
+    for(auto it: m){
+        cout << it.second.first << ":";
+    }
+}
+void printBottom(Node *root, int dist, int level , auto &m){
+    if(root == NULL){
+        return;
+    }
+    if(m[dist]. second <= level){
+        m[dist] = {root->key, level};
+    }
+    printBottom(root->left, dist-1, level+1, m);
+    printBottom(root->right, dist+1, level+1, m);
+}
+
+void bottomView(Node *root){
+    map<int, pair<int, int>>m;
+    int level = 1;
+    
+    printBottom(root,0, 1,m );
+    for(auto it:m){
+        cout << it.second.first << " : ";
+    }
+}
+
+void printLeft(Node *root, int dist, int level , auto &map){
+    if(root== NULL){
+        return;
+    }
+    cout << "::" << map[level].second << "::";
+    if(map[dist].first < dist ){
+        map[dist] = {root->key, dist};
+    }
+    printLeft(root->left, dist-1, level+1, map);
+    printLeft(root->right, dist+1, level+1, map);
+}
+
+void leftView(Node *root){
+   if(root == NULL){
+       return;
+   }
+   list<Node*> q ;
+   q.push_back(root);
+   Node*curr=nullptr;
+   while(!q.empty()){
+       int size = q.size();
+       int i = 0;
+       while(i++ < size){
+           curr = q.front();
+           q.pop_front();
+           if(i == 1){
+               cout << curr->key << ":" ;
+           }
+           if(curr->left){
+               q.push_back(curr->left);
+           }
+           if(curr->right){
+               q.push_back(curr->right);
+           }
+       }
+   }
+}
+
+int main() {
+	// your code goes here
+	 Node* root = new Node(1);
+    root->left = new Node(2);
+    root->right = new Node(3);
+    root->left->left = new Node(4);
+    root->left->right = new Node(5);
+    root->right->left = new Node(6);
+    root->right->right = new Node(7);
+    leftView(root);
+	return 0;
+}
