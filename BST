@@ -145,8 +145,25 @@ void checkBST(Node *root){
         cout <<"NO";
     }
 }
+//fun to find kth smallest number
+int kthsmallest(Node *root,int *i, int k){
+    if(root == nullptr){
+        return INT_MAX;
+    }
+    int left = kthsmallest(root->left, i , k);
+    if(left != INT_MAX){
+        return left;
+    }
+    if(++*i == k){
+        return root->key;
+    }
+    return kthsmallest(root->right, i , k);
+}
 
-
+int kthsmallest(Node *root, int k){
+    int i =0;
+    return kthsmallest(root, &i, k);
+}
 int main() {
 	// your code goes here
 	int keys[] = { 15, 10, 20, 8, 12, 16 };
