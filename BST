@@ -31,6 +31,36 @@ Node* insert(Node* root, int key)
     return root;
 }
 
+int isSearch(Node *root,int x){
+    if(root == NULL){
+        return false;
+    }
+    if(root->key < x){
+        isSearch(root->right, x);
+    }
+    if(root->key > x){
+        isSearch(root->left, x);
+    }
+    return true;
+}
+
+Node *LCA(Node *root, int x, int y){
+    if(root == NULL || !isSearch(root, x) || !isSearch(root, y) ){
+        return nullptr;
+    }
+    Node *curr = root;
+    while(curr != NULL){
+        if(curr->key> max(x,y)){
+            curr = curr->left;
+        }
+        else if(curr -> key < min(x,y)){
+            curr = curr->right;
+        }else{
+            return curr;
+        }
+    }
+}
+
 
 Node *minimumKey(Node *curr){
     while(curr->left!= NULL){
