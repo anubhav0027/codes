@@ -1,0 +1,134 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    int key;
+    Node *left, *right;
+};
+Node *node(int key){
+    Node* node = new Node;
+    node -> key= key;
+    node-> left = node -> right = nullptr;
+    return node;
+}
+Node* insert(Node* root, int key)
+{
+    // if the root is null, create a new node and return it
+    if (root == nullptr) {
+        return node(key);
+    }
+ 
+    // if the given key is less than the root node, recur for the left subtree
+    if (key < root->key) {
+        root->left = insert(root->left, key);
+    }
+ 
+    // if the given key is more than the root node, recur for the right subtree
+    else {
+        root->right = insert(root->right, key);
+    }
+ 
+    return root;
+}
+
+
+Node *minimumKey(Node *curr){
+    while(curr->left!= NULL){
+        curr = curr -> left;
+    }
+    return curr;
+}
+
+void search(Node* &curr , int target, Node* &parent){
+    while(curr != nullptr && curr->key != target){
+        parent = curr;
+        if(curr->key > target){
+            curr =curr->left;
+        }else{
+            curr = curr->right;
+        }
+    }
+}
+
+void DeleteNode(Node *root, int key){
+    Node *parent = nullptr;
+    Node *curr = root;
+    search(curr, key, parent);
+    if(curr == nullptr){
+        return;
+    }
+    if(curr-> left == nullptr && curr->right == nullptr){
+        if(curr!= root){
+            if(parent -> left == curr){
+                parent -> left = nullptr;
+            }else{
+                parent -> right = nullptr;
+            }
+        }else{
+            root = nullptr;
+        }
+        free(curr);
+    }else if(curr -> left && curr->right){
+        Node *successor = minimumKey(curr->right);
+        int val = successor->key;
+        DeleteNode(curr, successor->key);
+        curr->key = val;
+    }else{
+        Node *child  = (curr->left)? curr->left:curr->right;
+        if(curr!= root){
+            if(curr== parent->left){
+                parent ->left = child;
+            }else{
+                parent ->right = child;
+            }
+        }else{
+            root = child;
+        }
+        free(curr);
+    }
+}
+
+void inorder(Node *root){
+    if(root == nullptr){
+        return;
+    }else{
+        inorder(root->left);
+        cout << root->key << " ";
+        inorder(root->right);
+    }
+}
+
+int isBST(Node *root, int min, int max){
+    if(root == NULL){
+        return true;
+    }
+    if(root->key < min || root->key > max){
+        return false;
+    }
+    return isBST(root->left, min, root->key) && isBST(root->right, root->key,max);
+}
+
+void checkBST(Node *root){
+    if(isBST(root, INT_MIN, INT_MAX)){
+        cout <<"YAYAYA";
+    }else{
+        cout <<"NO";
+    }
+}
+
+
+int main() {
+	// your code goes here
+	int keys[] = { 15, 10, 20, 8, 12, 16 };
+ 
+    Node* root = nullptr;
+    for (int key: keys) {
+        root = insert(root, key);
+    }
+ 
+    DeleteNode(root, 16);
+    inorder(root);
+    checkBST(root);
+ 
+	return 0;
+}
