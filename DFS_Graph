@@ -1,0 +1,49 @@
+#include <iostream>
+#include<vector>
+using namespace std;
+
+struct Edge{
+    int src, dest;
+};
+
+class Graph{
+    public:
+    vector<vector<int>> adjList ;
+    Graph(vector<Edge> const &edges, int N){
+        adjList.resize(N);
+        for(int i=0; i<N; i++){
+            int src = edges[i].src;
+            int dest = edges[i].dest;
+            for(auto &edge : edges){
+                adjList[src].push_back(dest);
+            }
+        }
+    }
+};
+
+void DFS(Graph const &graph, int v, vector<bool> &discovered){
+    discovered[v] = true;
+    cout << v <<" ";
+    for(int u : graph.adjList[v]){
+        if(!discovered[u]){
+            DFS(graph, u, discovered);
+        }
+    }
+}
+
+int main() {
+	// your code goes here
+	vector<Edge> edges= {
+	     { 0, 1}, { 1, 2}, { 2, 0}, { 2, 1 },
+        { 3, 2 }, { 4, 5}, { 5, 4 }
+	};
+	int N = 6;
+	Graph graph(edges,N);
+	vector <bool> discovered(N);
+	for(int i =0; i < N; i++){
+	    if(discovered[i] == false){
+	        DFS(graph, i , discovered);
+	    }
+	}
+	return 0;
+}
